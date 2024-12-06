@@ -17,7 +17,7 @@ public class Main {
             String solverClassName = "Day" + day;
             String solverDirectory = "solutions.day" + day;
             String solverPath = solverDirectory + "." + solverClassName;
-            
+
             try {
                 solve(solverPath, consoleScanner, solverDirectory, day);
             } catch (ClassNotFoundException e) {
@@ -50,12 +50,12 @@ public class Main {
         Solution instance = (Solution) solverClass.getDeclaredConstructor().newInstance();
 
         char type = getInputType(consoleScanner);
-        String inputPath = "src/"+solverDirectory.replace('.','/') + "/"+ (type == 's' ? "sample.txt" : "input.txt");
+        String inputPath = "src/" + solverDirectory.replace('.', '/') + "/" + (type == 's' ? "sample.txt" : "input.txt");
         var solution = instance.solve(new Scanner(new File(inputPath)));
 
         System.out.println(
                 "Day " + day + " " + (type == 's' ? "<sample> " : "<input> ") + "data solution:\npart 1: "
-                        + solution.part2() +", part 2: "+solution.part2()
+                        + solution.part1() + ", part 2: " + solution.part2()
         );
     }
 }

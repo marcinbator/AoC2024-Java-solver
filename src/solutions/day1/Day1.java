@@ -3,7 +3,6 @@ package solutions.day1;
 import solutions.Solution;
 import solutions.SolutionResponse;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Scanner;
@@ -34,7 +33,7 @@ public class Day1 implements Solution {
 
             sum += Math.abs(min1 - min2);
         }
-        
+
         return new SolutionResponse(sum, col1.stream()
                 .map(l -> l * occurrences.get(l))
                 .mapToInt(Integer::intValue)

@@ -1,4 +1,4 @@
 package solutions;
 
-public record SolutionResponse (long part1, long part2) {
+public record SolutionResponse(long part1, long part2) {
 }
