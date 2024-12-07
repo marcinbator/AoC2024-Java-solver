@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Scanner consoleScanner = new Scanner(System.in);
 
         while (true) {
@@ -19,13 +19,14 @@ public class Main {
             String solverPath = solverDirectory + "." + solverClassName;
 
             try {
+                var startTime = System.currentTimeMillis();
                 solve(solverPath, consoleScanner, solverDirectory, day);
+                var endTime = System.currentTimeMillis();
+                System.out.println("Solution calculated in " + (endTime - startTime) / 1000.0 + " seconds");
             } catch (ClassNotFoundException e) {
                 System.out.println("Day " + solverClassName + " does not exist.");
             } catch (IllegalArgumentException e) {
                 System.out.println("Invalid input!");
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
             } finally {
                 System.out.println("\n-----------------\n");
             }
