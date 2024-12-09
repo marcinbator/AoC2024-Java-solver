@@ -33,7 +33,6 @@ public class Day9 implements Solution {
             }
         }
 
-        if (checksum1 != 6446899523367L || checksum2 != 6478232739671L) System.out.println("wrong");
         return new SolutionResponse(checksum1, checksum2);
     }
 
