@@ -28,27 +28,26 @@ public class Day16 implements Solution {
         assert start != null;
         assert end != null;
 
-        var queue = new PriorityQueue<TileQ>(Comparator.comparingDouble(t -> t.totalCost));
+        var queue = new PriorityQueue<TileQ>(Comparator.comparing(t -> t.totalCost));
         queue.add(new TileQ(start, 0, calcDistance(start, end), Direction.E, null));
 
-        var visitedCosts = new HashMap<Tile, Double>();
+        var visitedCosts = new HashMap<Tile, Integer>();
         var visitedDirections = new HashMap<Tile, Direction>();
-        double total=0;
-        
+        int total = 0;
+
         var visited = new ArrayList<TileQ>();
         var path = new HashSet<TileQ>();
-        
+
         while (!queue.isEmpty()) {
             var current = queue.poll();
             if (current.tile.equals(end)) {
-                total=current.gCost;
-                var copy = new PriorityQueue<TileQ>(Comparator.comparingDouble(t -> t.totalCost));
+                total = current.gCost;
+                var copy = new PriorityQueue<TileQ>(Comparator.comparing(t -> t.totalCost));
                 visited.add(current);
                 copy.add(current);
-                while(!copy.isEmpty()) {
-                    var copyElement = copy.poll();
-                    TileQ finalCopyElement = copyElement;
-                    var same = visited.stream().filter(v->v.tile==finalCopyElement.tile && v.parent != null && v.parent.gCost< finalCopyElement.gCost).map(v->v.parent).filter(v->v.tile.value=='.').toList();
+                while (!copy.isEmpty()) {
+                    TileQ finalCopyElement = copy.poll();
+                    var same = visited.stream().filter(v -> v.tile == finalCopyElement.tile && v.parent != null && v.parent.gCost < finalCopyElement.gCost).map(v -> v.parent).filter(v -> v.tile.value == '.').toList();
                     path.addAll(same);
                     copy.addAll(same);
                 }
@@ -58,30 +57,33 @@ public class Day16 implements Solution {
                     && visitedCosts.get(current.tile) <= current.gCost) {
                 continue;
             }
-            
+
             visitedCosts.put(current.tile, current.gCost);
             visitedDirections.put(current.tile, current.direction);
             visited.add(current);
             var neighbors = getNeighs(current, tiles, end);
-            
+
             queue.addAll(neighbors);
         }
 
         System.out.println(total);
-        System.out.println(path.size());
-       
-        return new SolutionResponse(0, 0);
+        System.out.println(path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
+
+        return new SolutionResponse(total, path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
     }
 
     enum Direction {E, W, N, S}
+
     record Tile(int x, int y, char value) {
     }
-    record TileQ(Tile tile, double gCost, double totalCost, Direction direction, TileQ parent) {
+
+    record TileQ(Tile tile, int gCost, int totalCost, Direction direction, TileQ parent) {
     }
+
     record NeighDir(int dx, int dy, Direction direction) {
     }
 
-    double calcDistance(Tile from, Tile to) {
+    int calcDistance(Tile from, Tile to) {
         return Math.abs(from.x - to.x) + Math.abs(from.y - to.y);
     }
 
@@ -104,8 +106,8 @@ public class Day16 implements Solution {
             Tile neighbor = tiles.get(ny).get(nx);
             if (neighbor.value == '#') continue;
 
-            double moveCost = current.gCost + getTurnCost(current.direction, dir.direction);
-            double heuristic = calcDistance(neighbor, end);
+            int moveCost = current.gCost + getTurnCost(current.direction, dir.direction);
+            int heuristic = calcDistance(neighbor, end);
 
             neighbors.add(new TileQ(neighbor, moveCost, moveCost + heuristic, dir.direction, current));
         }
@@ -113,7 +115,7 @@ public class Day16 implements Solution {
         return neighbors;
     }
 
-    double getTurnCost(Direction from, Direction to) {
+    int getTurnCost(Direction from, Direction to) {
         return switch (from) {
             case N -> switch (to) {
                 case N -> 1;
