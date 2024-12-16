@@ -29,16 +29,29 @@ public class Day16 implements Solution {
         assert end != null;
 
         var queue = new PriorityQueue<TileQ>(Comparator.comparingDouble(t -> t.totalCost));
-        queue.add(new TileQ(start, 0, calcDistance(start, end), Direction.E));
+        queue.add(new TileQ(start, 0, calcDistance(start, end), Direction.E, null));
 
         var visitedCosts = new HashMap<Tile, Double>();
         var visitedDirections = new HashMap<Tile, Direction>();
         double total=0;
         
+        var visited = new ArrayList<TileQ>();
+        var path = new HashSet<TileQ>();
+        
         while (!queue.isEmpty()) {
             var current = queue.poll();
             if (current.tile.equals(end)) {
                 total=current.gCost;
+                var copy = new PriorityQueue<TileQ>(Comparator.comparingDouble(t -> t.totalCost));
+                visited.add(current);
+                copy.add(current);
+                while(!copy.isEmpty()) {
+                    var copyElement = copy.poll();
+                    TileQ finalCopyElement = copyElement;
+                    var same = visited.stream().filter(v->v.tile==finalCopyElement.tile && v.parent != null && v.parent.gCost< finalCopyElement.gCost).map(v->v.parent).filter(v->v.tile.value=='.').toList();
+                    path.addAll(same);
+                    copy.addAll(same);
+                }
                 break;
             }
             if (visitedCosts.containsKey(current.tile) && visitedDirections.get(current.tile) == current.direction
@@ -48,12 +61,14 @@ public class Day16 implements Solution {
             
             visitedCosts.put(current.tile, current.gCost);
             visitedDirections.put(current.tile, current.direction);
+            visited.add(current);
             var neighbors = getNeighs(current, tiles, end);
             
             queue.addAll(neighbors);
         }
 
         System.out.println(total);
+        System.out.println(path.size());
        
         return new SolutionResponse(0, 0);
     }
@@ -61,7 +76,7 @@ public class Day16 implements Solution {
     enum Direction {E, W, N, S}
     record Tile(int x, int y, char value) {
     }
-    record TileQ(Tile tile, double gCost, double totalCost, Direction direction) {
+    record TileQ(Tile tile, double gCost, double totalCost, Direction direction, TileQ parent) {
     }
     record NeighDir(int dx, int dy, Direction direction) {
     }
@@ -92,7 +107,7 @@ public class Day16 implements Solution {
             double moveCost = current.gCost + getTurnCost(current.direction, dir.direction);
             double heuristic = calcDistance(neighbor, end);
 
-            neighbors.add(new TileQ(neighbor, moveCost, moveCost + heuristic, dir.direction));
+            neighbors.add(new TileQ(neighbor, moveCost, moveCost + heuristic, dir.direction, current));
         }
 
         return neighbors;
