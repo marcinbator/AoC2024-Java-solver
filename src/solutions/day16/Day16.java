@@ -42,15 +42,7 @@ public class Day16 implements Solution {
             var current = queue.poll();
             if (current.tile.equals(end)) {
                 total = current.gCost;
-                var copy = new PriorityQueue<TileQ>(Comparator.comparing(t -> t.totalCost));
-                visited.add(current);
-                copy.add(current);
-                while (!copy.isEmpty()) {
-                    TileQ finalCopyElement = copy.poll();
-                    var same = visited.stream().filter(v -> v.tile == finalCopyElement.tile && v.parent != null && v.parent.gCost < finalCopyElement.gCost).map(v -> v.parent).filter(v -> v.tile.value == '.').toList();
-                    path.addAll(same);
-                    copy.addAll(same);
-                }
+                path = findPaths(visited, current);
                 break;
             }
             if (visitedCosts.containsKey(current.tile) && visitedDirections.get(current.tile) == current.direction
@@ -61,7 +53,7 @@ public class Day16 implements Solution {
             visitedCosts.put(current.tile, current.gCost);
             visitedDirections.put(current.tile, current.direction);
             visited.add(current);
-            var neighbors = getNeighs(current, tiles, end);
+            var neighbors = getNeighbors(current, tiles, end);
 
             queue.addAll(neighbors);
         }
@@ -70,6 +62,23 @@ public class Day16 implements Solution {
         System.out.println(path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
 
         return new SolutionResponse(total, path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
+    }
+
+    private HashSet<TileQ> findPaths(ArrayList<TileQ> visited, TileQ current) {
+        var path = new HashSet<TileQ>();
+        var copy = new PriorityQueue<TileQ>(Comparator.comparing(t -> t.totalCost));
+        visited.add(current);
+        copy.add(current);
+        while (!copy.isEmpty()) {
+            TileQ finalCopyElement = copy.poll();
+            var same = visited.stream()
+                    .filter(v -> v.tile == finalCopyElement.tile && v.parent != null && v.parent.gCost < finalCopyElement.gCost)
+                    .map(v -> v.parent).filter(v -> v.tile.value == '.')
+                    .toList();
+            path.addAll(same);
+            copy.addAll(same);
+        }
+        return path;
     }
 
     enum Direction {E, W, N, S}
@@ -87,35 +96,31 @@ public class Day16 implements Solution {
         return Math.abs(from.x - to.x) + Math.abs(from.y - to.y);
     }
 
-    List<TileQ> getNeighs(TileQ current, List<List<Tile>> tiles, Tile end) {
+    List<TileQ> getNeighbors(TileQ current, List<List<Tile>> tiles, Tile end) {
         var directions = List.of(
                 new NeighDir(1, 0, Direction.E),
                 new NeighDir(0, -1, Direction.S),
                 new NeighDir(-1, 0, Direction.W),
                 new NeighDir(0, 1, Direction.N)
         );
-
         List<TileQ> neighbors = new ArrayList<>();
-
         for (var dir : directions) {
             int nx = current.tile.x + dir.dx;
             int ny = current.tile.y + dir.dy;
 
             if (ny < 0 || ny >= tiles.size() || nx < 0 || nx >= tiles.get(ny).size()) continue;
-
             Tile neighbor = tiles.get(ny).get(nx);
             if (neighbor.value == '#') continue;
 
-            int moveCost = current.gCost + getTurnCost(current.direction, dir.direction);
-            int heuristic = calcDistance(neighbor, end);
-
-            neighbors.add(new TileQ(neighbor, moveCost, moveCost + heuristic, dir.direction, current));
+            int moveCost = current.gCost + getMoveCost(current.direction, dir.direction);
+            neighbors.add(
+                    new TileQ(neighbor, moveCost, moveCost + calcDistance(neighbor, end), dir.direction, current)
+            );
         }
-
         return neighbors;
     }
 
-    int getTurnCost(Direction from, Direction to) {
+    int getMoveCost(Direction from, Direction to) {
         return switch (from) {
             case N -> switch (to) {
                 case N -> 1;
