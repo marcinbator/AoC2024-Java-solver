@@ -3,6 +3,7 @@ package solutions.day17;
 import solutions.Solution;
 import solutions.SolutionResponse;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Day17 implements Solution {
@@ -15,12 +16,35 @@ public class Day17 implements Solution {
 
         var part1 = compute(regA, regB, regC, program);
         System.out.println(part1);
-        
-        
+
+        var nums = new ArrayList<Long>();
+        nums.add(0L);
+
+        for (var i = program.length() - 1; i >= 0; i--) {
+            var count = nums.size();
+            for (var x = 0; x < count; x++) {
+                var currentA = nums.get(x) * 8;
+
+                for (var j = 0; j < 8; j++) {
+                    var output = compute(currentA + j, 0L, 0L, program);
+                    var outputX = String.join("", output.split(","));
+                    if (program.substring(i).equals(outputX)) {
+                        nums.add(currentA + j);
+                    }
+                }
+            }
+
+            for (int y = 0; y < count; y++) {
+                nums.removeFirst();
+            }
+        }
+
+        var part2 = nums.stream().min(Long::compareTo).get();
+        System.out.println(part2);
 
         return new SolutionResponse(0, 0);
     }
-    
+
     private String compute(long regA, long regB, long regC, String program) {
         int instPointer = 0;
         var outputB = new StringBuilder();
@@ -50,7 +74,7 @@ public class Day17 implements Solution {
             instPointer += 2;
 
         }
-        return outputB.substring(0, outputB.length()-1);
+        return outputB.substring(0, outputB.length() - 1);
     }
 
     private long getComboOperandValue(long operand, long regA, long regB, long regC) {
@@ -71,11 +95,11 @@ public class Day17 implements Solution {
             long number,
             long power
     ) {
-        if(power == 0) return 1;
+        if (power == 0) return 1;
         long result = number;
 
-        while(power > 1) {
-            result*=number;
+        while (power > 1) {
+            result *= number;
             power--;
         }
 
