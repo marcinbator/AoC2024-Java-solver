@@ -58,9 +58,6 @@ public class Day16 implements Solution {
             queue.addAll(neighbors);
         }
 
-        System.out.println(total);
-        System.out.println(path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
-
         return new SolutionResponse(total, path.stream().map(p -> p.tile).filter(p -> p.value == '.').distinct().toList().size() + 2);
     }
 

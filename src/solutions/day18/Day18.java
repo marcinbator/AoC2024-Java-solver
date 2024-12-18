@@ -26,15 +26,16 @@ public class Day18 implements Solution {
             line = inputScanner.nextLine();
             cords.add(cord);
         }
-        
-        int part1=0;
+
+        int part1 = 0;
         String part2;
 
         //1
         fillBoard(bytesLimit, cords, board);
         try {
             part1 = getTotalCost(board);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         //2
         String lastByte = null;
@@ -46,13 +47,12 @@ public class Day18 implements Solution {
             } catch (Exception e) {
                 assert lastByte != null;
                 var result = String.join("", lastByte.split(" "));
-                part2 = result.substring(1, result.length()-1);
+                part2 = result.substring(1, result.length() - 1);
                 break;
             }
         }
-        System.out.println(part2);
 
-        return new SolutionResponse(part1, 0);
+        return new SolutionResponse(String.valueOf(part1), part2);
     }
 
     private static String fillBoard(int bytes, List<Integer[]> cords, List<List<Character>> board) {
@@ -86,7 +86,7 @@ public class Day18 implements Solution {
             visitedCosts.put(tile, tile.cost);
             queue.addAll(getNeighbors(tile, board));
         }
-        
+
         throw new Exception("No route");
     }
 

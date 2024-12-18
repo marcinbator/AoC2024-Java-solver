@@ -15,7 +15,6 @@ public class Day17 implements Solution {
         String program = String.join("", inputScanner.nextLine().split(":")[1].strip().split(","));
 
         var part1 = compute(regA, regB, regC, program);
-        System.out.println(part1);
 
         var nums = new ArrayList<Long>();
         nums.add(0L);
@@ -40,9 +39,8 @@ public class Day17 implements Solution {
         }
 
         var part2 = nums.stream().min(Long::compareTo).get();
-        System.out.println(part2);
 
-        return new SolutionResponse(0, 0);
+        return new SolutionResponse(part1, String.valueOf(part2));
     }
 
     private String compute(long regA, long regB, long regC, String program) {

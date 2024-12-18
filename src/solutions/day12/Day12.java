@@ -39,9 +39,7 @@ public class Day12 implements Solution {
             }
         }
 
-        System.out.println(totalSum);
-        System.out.println(corners);
-        return new SolutionResponse(0, 0);
+        return new SolutionResponse(totalSum, corners);
     }
 
     private long[] explorePlot(int startX, int startY, List<List<Character>> map, boolean[][] visited) {

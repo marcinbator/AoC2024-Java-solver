@@ -14,10 +14,7 @@ public class Day11 implements Solution {
             stonesCopy = newStones(stonesCopy);
         }
 
-        System.out.println(stonesCopy.size());
-        System.out.println(part2(stones));
-
-        return new SolutionResponse(0, 0);
+        return new SolutionResponse(stonesCopy.size(), part2(stones));
     }
 
     private static LinkedList<Long> newStones(LinkedList<Long> stones) {
