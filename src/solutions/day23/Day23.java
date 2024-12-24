@@ -34,8 +34,6 @@ public class Day23 implements Solution {
             }
         }
 
-        System.out.println(sets.size());
-
         //
 
         Set<String> largestClique = new HashSet<>();
@@ -46,9 +44,8 @@ public class Day23 implements Solution {
 
         var response = (largestClique.stream().sorted().toList().toString());
         response = String.join("", response.substring(1, response.length() - 1).split(" "));
-        System.out.println(response);
 
-        return new SolutionResponse(0, 0);
+        return new SolutionResponse(String.valueOf(sets.size()), response);
     }
 
     private static void findAllConnected( //Bron-Kerbosch algorithm

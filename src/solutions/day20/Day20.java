@@ -2,7 +2,6 @@ package solutions.day20;
 
 import solutions.Solution;
 import solutions.SolutionResponse;
-import solutions.day18.Day18;
 
 import java.util.*;
 
@@ -11,22 +10,22 @@ public class Day20 implements Solution {
         List<List<Character>> board = new ArrayList<>();
         Tile start = null;
         Tile end = null;
-        int sizeY=0;
+        int sizeY = 0;
         while (inputScanner.hasNextLine()) {
             String line = inputScanner.nextLine();
             List<Character> row = new ArrayList<>();
             for (int i = 0; i < line.length(); i++) {
                 char element = line.charAt(i);
                 row.add(element);
-                if(element=='S') start = new Tile(i,sizeY,0,0,null,CheatState.NO);
-                if(element=='E') end = new Tile(i,sizeY,0,0,null,CheatState.NO);
+                if (element == 'S') start = new Tile(i, sizeY, 0, 0, null, CheatState.NO);
+                if (element == 'E') end = new Tile(i, sizeY, 0, 0, null, CheatState.NO);
             }
             board.add(row);
             sizeY++;
         }
         assert start != null;
         assert end != null;
-        
+
         //
 
         int normalCost = 0;
@@ -57,8 +56,8 @@ public class Day20 implements Solution {
 
         System.out.println(normalCost);
         System.out.println(cheatedCost);
-        System.out.println(normalCost-cheatedCost);
-        
+        System.out.println(normalCost - cheatedCost);
+
         return new SolutionResponse(0, 0);
     }
 
@@ -76,9 +75,9 @@ public class Day20 implements Solution {
             return Objects.hash(x, y);
         }
     }
-    
+
     enum CheatState {
-        NO,STARTED,ENDED
+        NO, STARTED, ENDED
     }
 
     private List<Tile> getNeighbors(Tile tile, List<List<Character>> board) {
@@ -108,12 +107,12 @@ public class Day20 implements Solution {
 
             if (ny < 0 || ny >= board.size() || nx < 0 || nx >= board.get(ny).size()) continue;
             var neighbor = board.get(ny).get(nx);
-            
-            if (neighbor == '#'){
-                if(tile.state.equals(CheatState.NO))
+
+            if (neighbor == '#') {
+                if (tile.state.equals(CheatState.NO))
                     tile = new Tile(tile.x, tile.y, tile.cost, tile.totalCost, tile.parent, CheatState.STARTED);
                 else continue;
-            } else if(tile.state.equals(CheatState.STARTED)){
+            } else if (tile.state.equals(CheatState.STARTED)) {
                 tile = new Tile(tile.x, tile.y, tile.cost, tile.totalCost, tile.parent, CheatState.ENDED);
             }
 
